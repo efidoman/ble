@@ -33,6 +33,7 @@ type Adapter interface {
 	SetDiscoveryFilter(uuids ...string) error
 
 	Discover(timeout time.Duration, uuids ...string) error
+	DiscoverByDevice(timeout time.Duration, name string) error
 }
 
 // GetAdapter finds an Adapter in the object cache and returns it.
