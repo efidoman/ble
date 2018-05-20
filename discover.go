@@ -95,10 +95,22 @@ func (adapter *blob) discoveryComplete(s *dbus.Signal, uuids []string) bool {
 		services = nil
 	}
 	if !uuidsInclude(services, uuids) {
-		log.Printf("%s: skipping signal for device %s without matching UUIDs", adapter.Name(), name)
-		log.Printf("%s: wanted %v, got %v", adapter.Name(), uuids, services)
+		log.Printf("\n%s: skipping signal for device %s without matching UUIDs\n", adapter.Name(), name)
+		log.Printf("%s: wanted %v, got %v\n", adapter.Name(), uuids, services)
 		return false
+	} else {
+		if name == "DexcomFE" {
+
+		log.Printf("\n%s: found device %s with matching UUIDs\n", adapter.Name(), name)
+		log.Printf("%s: wanted %v, got %v\n", adapter.Name(), uuids, services)
+		} else {
+		log.Printf("\n%s: found device %s with matching UUIDs\n", adapter.Name(), name)
+		log.Printf("%s: wanted %v, got %v\n", adapter.Name(), uuids, services)
+		log.Printf("%s: However, skipping because I am filtering to just DexcomFE\n", adapter.Name())
+			return false
+		}
 	}
+
 	log.Printf("%s: discovered %s", adapter.Name(), name)
 	return true
 }

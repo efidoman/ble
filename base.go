@@ -175,6 +175,19 @@ func (conn *Connection) findObject(iface string, matching predicate) (*blob, err
 	conn.iterObjects(func(path dbus.ObjectPath, dict dbusInterfaces) bool {
 		props := (*dict)[iface]
 		if props == nil {
+		ob := &blob{
+			conn:       conn,
+			path:       path,
+			iface:      iface,
+			properties: props,
+			object:     conn.bus.Object("org.bluez", path),
+		}
+		fmt.Print("\nprops=null-- path=\n")
+		fmt.Print(path)
+		fmt.Print("\n*dict=\n")
+		fmt.Print(*dict)
+		fmt.Print("\nob=\n")
+		fmt.Print(ob)
 			return false
 		}
 		obj := &blob{
@@ -184,9 +197,33 @@ func (conn *Connection) findObject(iface string, matching predicate) (*blob, err
 			properties: props,
 			object:     conn.bus.Object("org.bluez", path),
 		}
+		fmt.Print("\nfindObject searching  -- obj=\n")
+		fmt.Print(obj)
+		fmt.Print("\nfindObject searching  -- props=\n")
+		fmt.Print(props)
+		fmt.Print("\nfindObject searching  -- iface=\n")
+		fmt.Print(iface)
 		if matching(obj) {
 			found = append(found, obj)
 		}
+
+// try hard coding for now
+// hard code FF:5C:14:C0:E2:65
+   /*           if obj.Name() == "/org/bluez/hci0/dev_FF_5C_14_C0_E2_65/service000c/char0013" {
+                        fmt.Println("")
+                        fmt.Println("")
+                        fmt.Println("")
+                        fmt.Println("")
+                        fmt.Println("")
+                        fmt.Println("Hard coded FINDDDDDDDDDDDD---------")
+                        fmt.Println(obj)
+                        fmt.Println(props)
+                        fmt.Println(iface)
+                        found = append(found, obj)
+                }
+*/
+
+
 		return false
 	})
 	switch len(found) {
@@ -195,7 +232,12 @@ func (conn *Connection) findObject(iface string, matching predicate) (*blob, err
 	case 0:
 		return nil, fmt.Errorf("interface %s not found", iface)
 	default:
-		return nil, fmt.Errorf("found %d instances of interface %s", len(found), iface)
+		if len(found) > 1 {
+
+			return found[0], nil
+		} else {
+			return nil, fmt.Errorf("found %d instances of interface %s", len(found), iface)
+		}
 	}
 }
 

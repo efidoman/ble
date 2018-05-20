@@ -46,7 +46,7 @@ func (adapter *blob) discoverByDeviceLoop(name string, signals <-chan *dbus.Sign
 					return nil
 				}
 			default:
-				log.Printf("%s: unexpected signal %s", adapter.Name(), s.Name)
+				log.Printf("%s: unexpected signal %s\n", adapter.Name(), s.Name)
 			}
 		case <-timeout:
 				log.Printf("whatever")
@@ -58,7 +58,7 @@ func (adapter *blob) discoverByDeviceLoop(name string, signals <-chan *dbus.Sign
 func (adapter *blob) discoveryByDeviceComplete(s *dbus.Signal, nameFilter string) bool {
 	props := interfaceProperties(s)
 	if props == nil {
-		log.Printf("%s: skipping signal %+v with no device interface", adapter.Name(), s)
+		log.Printf("%s: skipping signal %+v with no device interface\n", adapter.Name(), s)
 		return false
 	}
 	name, ok := props["Name"].Value().(string)
@@ -66,9 +66,10 @@ func (adapter *blob) discoveryByDeviceComplete(s *dbus.Signal, nameFilter string
 		name = "[unknown]"
 	}
         if name != nameFilter {
-		log.Printf("%s: skipping signal %+v where name(%s) doesn't match nameFilter(%s)", adapter.Name(), s, name, nameFilter)
+		log.Printf("%s: skipping signal %+v where name(%s) doesn't match nameFilter(%s)\n", adapter.Name(), s, name, nameFilter)
 		return false
 	} else {
+		log.Printf("%s: found signal %+v where name(%s) does match nameFilter(%s)\n", adapter.Name(), s, name, nameFilter)
 	   	log.Printf("%s: discovered %s", adapter.Name(), name)
 		return true
        }
